@@ -18,7 +18,7 @@ new_messages = []
 now = datetime.now()
 last_message_date = int(now.strftime("%Y" + "%m" + "%d" + "%H" + "%M" + "%S"))
 
-openai.api_key = "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"
+openai.api_key = "insert-your-api-key"
 model_engine = "text-davinci-003"
 
 while True:
