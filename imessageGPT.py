@@ -14,11 +14,11 @@ from_me = 1
 from_you = 0
 
 new_messages = []
-#summary_array = []
+summary_array = [[]]
 now = datetime.now()
 last_message_date = int(now.strftime("%Y" + "%m" + "%d" + "%H" + "%M" + "%S"))
 
-openai.api_key = "insert-your-api-key"
+openai.api_key = "insert-your-own-api-key"
 model_engine = "text-davinci-003"
 
 while True:
@@ -37,12 +37,23 @@ while True:
     prompt = message[message_index]
     print(message[sender_number_index] + "\n" + message[message_type_index] + "\n" + 'Prompt: ' + prompt)
     
-    #summary = [message[message_index]]
-    #summary_array.append(summary)
+    summary = [message[message_index]]
+    try:
+      index = summary_array.index(message[sender_number_index])
+      summary_array[index].append(summary)
+      if summary_array[index].len() > 10:
+        summary_array.pop(0)
+    except ValueError:
+      summary_array.append[message[sender_number_index]]
+      index = summary_array.index(message[sender_number_index])
+      summary_array[index].append(summary)
+      if summary_array[index].len() > 10:
+        summary_array.pop(0)
 
+    summary = " next message: ".join(summary_array)
     completion = openai.Completion.create(
       engine = model_engine,
-      prompt = "Give a response to: " + prompt,
+      prompt = "Previous messages include: " + summary + "Give a response to: " + prompt,
       max_tokens = 256,
       temperature = 0.5,
       top_p = 1,
@@ -57,10 +68,10 @@ while True:
       os.system(
         "osascript sendiMessage.applescript {} {}".format(message[sender_number_index], response)
       )
+      summary.append(message)
     if message[message_type_index] == "SMS":
       os.system(
         "osascript sendSMS.applescript {} {}".format(message[sender_number_index], response)
       )
-
     new_messages.remove(message)
     sleep(1)
